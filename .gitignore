@@ -1,0 +1,14 @@
+# Binaries
+/dropzone
+/dropzone.exe
+/dist/
+*.exe
+
+# Local config / secrets (never commit)
+config.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

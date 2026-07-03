@@ -1,0 +1,23 @@
+{
+  "r2": {
+    "accountId": "YOUR_CLOUDFLARE_ACCOUNT_ID",
+    "accessKeyId": "YOUR_R2_ACCESS_KEY_ID",
+    "secretAccessKey": "",
+    "bucket": "your-bucket-name",
+    "publicBaseUrl": "https://cdn.example.com"
+  },
+  "watchFolders": [],
+  "watchClipboard": true,
+  "copyLinkToClipboard": true,
+  "keyPrefix": "",
+  "image": {
+    "format": "webp-lossless",
+    "jpegQualityFallback": 80
+  },
+  "video": {
+    "codec": "h265",
+    "crf": 0,
+    "preset": "medium",
+    "ffmpegPath": ""
+  }
+}
