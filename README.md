@@ -1,9 +1,9 @@
 # dropzone
 
-A lightweight, cross-platform **system-tray applet** that watches for new
-screenshots and screen recordings, compresses them, and uploads them to your
-**Cloudflare R2** bucket automatically. After each upload a clean public URL is
-copied to your clipboard (ShareX-style).
+A lightweight, cross-platform **desktop app (GUI + system tray)** that watches
+for new screenshots and screen recordings, compresses them, and uploads them to
+your **Cloudflare R2** bucket automatically. After each upload a clean public URL
+is copied to your clipboard (ShareX-style).
 
 - **Screenshots** → compressed to **lossless WebP** → uploaded.
 - **Recordings** → **original uploaded first** (fast availability) → re-encoded
@@ -14,7 +14,7 @@ copied to your clipboard (ShareX-style).
 
 ## Requirements
 
-- **Go 1.24+** and a **C compiler** to build (the tray library uses cgo).
+- **Go 1.24+** and a **C compiler** to build (Fyne uses cgo + OpenGL).
   On Windows: [WinLibs](https://winlibs.com/) / MSYS2 / TDM-GCC. `CGO_ENABLED=1`.
 - **ffmpeg** on your `PATH` for video compression (screenshots work without it).
   If ffmpeg is missing, recordings are still uploaded — just not compressed.
@@ -25,17 +25,18 @@ copied to your clipboard (ShareX-style).
 # from the repo root
 go mod tidy
 CGO_ENABLED=1 go build -o dropzone ./cmd/dropzone
-# Windows (hide the console window for a tray app):
+# Windows (console-less GUI build — no terminal window):
 #   go build -ldflags "-H=windowsgui" -o dropzone.exe ./cmd/dropzone
 ```
 
 ## Configure
 
-Run the interactive setup once:
+Just launch **dropzone** — the window opens on the **Settings** tab. Enter your
+R2 details and click **Save & Apply** (hit **Test connection** first to check
+them). Watching starts immediately.
 
-```sh
-./dropzone --setup
-```
+Prefer a terminal? `./dropzone --setup` does the same interactively, and
+`./dropzone --verify` checks your saved credentials.
 
 It stores non-secret settings in a JSON config and your **secret access key in
 the OS keychain** (Windows Credential Manager / macOS Keychain / Linux Secret
@@ -77,14 +78,15 @@ See [`config.example.json`](config.example.json) for all options.
 
 ## Run
 
-Launch `dropzone` (double-click the built binary or run it from a terminal). A tray
-icon appears with:
+Launch `dropzone` (double-click the binary). You get:
 
-- **Status** — current activity (watching / uploading / paused).
-- **Pause / Resume** — stop or resume processing.
-- **Open config folder**.
-- **Start at login** — toggle autostart (no admin needed).
-- **Quit**.
+- A **dashboard window** with two tabs:
+  - **Status** — live activity, a Pause/Resume button, and a list of recent
+    uploads (click one to copy its link).
+  - **Settings** — edit R2 credentials, watch folders, video codec, and the
+    clipboard/link options; **Save & Apply** restarts watching immediately.
+- A **system-tray icon** (menu: Open dropzone · Pause/Resume · Start at login).
+  Closing the window **hides to tray** — the app keeps watching in the background.
 
 ## Object layout in R2
 

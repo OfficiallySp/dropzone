@@ -4,14 +4,22 @@ package clipboardwatch
 
 import (
 	"context"
+	"sync"
 
 	"golang.design/x/clipboard"
 )
 
-// Init prepares the clipboard backend. It returns an error on headless systems
-// (no GUI session), in which case clipboard watching should be skipped.
+var (
+	initOnce sync.Once
+	initErr  error
+)
+
+// Init prepares the clipboard backend (idempotent — safe to call on every
+// service restart). It returns an error on headless systems (no GUI session),
+// in which case clipboard watching should be skipped.
 func Init() error {
-	return clipboard.Init()
+	initOnce.Do(func() { initErr = clipboard.Init() })
+	return initErr
 }
 
 // Watch returns a channel of raw PNG bytes, one per new clipboard image.

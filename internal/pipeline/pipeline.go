@@ -31,6 +31,9 @@ type Pipeline struct {
 
 	// OnStatus, if set, receives short human-readable status lines for the tray.
 	OnStatus func(string)
+	// OnUpload, if set, is called after each successful upload with the source
+	// name and the public URL.
+	OnUpload func(name, url string)
 }
 
 type job struct {
@@ -134,7 +137,7 @@ func (p *Pipeline) processImage(ctx context.Context, j job) {
 		return
 	}
 	log.Printf("uploaded image %s (%d -> %d bytes)", key, len(j.data), len(res.Data))
-	p.afterUpload(key)
+	p.afterUpload(j.origName, key)
 }
 
 // processVideo uploads the original first (fast availability), then compresses
@@ -152,7 +155,7 @@ func (p *Pipeline) processVideo(ctx context.Context, j job) {
 		return
 	}
 	log.Printf("uploaded original video %s", origKey)
-	p.afterUpload(origKey)
+	p.afterUpload(j.origName, origKey)
 
 	// Compress + replace.
 	p.status("compressing " + j.origName)
@@ -189,16 +192,20 @@ func (p *Pipeline) processVideo(ctx context.Context, j job) {
 	if fi, serr := os.Stat(out); serr == nil {
 		log.Printf("replaced with compressed video %s (%d bytes)", finalKey, fi.Size())
 	}
-	p.afterUpload(finalKey)
+	p.afterUpload(j.origName, finalKey)
 }
 
-// afterUpload copies the public link to the clipboard (if enabled) and reports status.
-func (p *Pipeline) afterUpload(key string) {
+// afterUpload copies the public link to the clipboard (if enabled), reports
+// status, and notifies any OnUpload listener.
+func (p *Pipeline) afterUpload(name, key string) {
 	url := p.client.PublicURL(key)
 	if p.cfg.CopyLinkToClipboard && p.cfg.R2.PublicBaseURL != "" {
 		clipboardwatch.WriteText(url)
 	}
 	p.status("uploaded → " + url)
+	if p.OnUpload != nil {
+		p.OnUpload(name, url)
+	}
 }
 
 // datedKey builds an object key like [prefix/]root/YYYY/MM/DD/<ulid><ext>.
