@@ -57,7 +57,8 @@ You'll be asked for:
 - **Public base URL** — your bucket's **custom domain** (e.g.
   `https://cdn.example.com`), used to build the shareable links.
 
-Verify credentials any time with `./dropzone --verify`.
+Verify credentials any time with `./dropzone --verify`, and print the build
+version with `./dropzone --version`.
 
 See [`config.example.json`](config.example.json) for all options.
 
