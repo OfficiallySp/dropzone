@@ -21,6 +21,7 @@ import (
 	"dropzone/internal/config"
 	"dropzone/internal/r2"
 	"dropzone/internal/service"
+	"dropzone/internal/version"
 )
 
 //go:embed icon.png
@@ -70,7 +71,7 @@ func Run(cfg *config.Config, svc *service.Service) {
 	icon := fyne.NewStaticResource("icon.png", iconPNG)
 	u.app.SetIcon(icon)
 
-	u.win = u.app.NewWindow("dropzone")
+	u.win = u.app.NewWindow("dropzone " + version.Current)
 	u.win.SetIcon(icon)
 	u.win.Resize(fyne.NewSize(580, 540))
 	u.win.SetCloseIntercept(func() { u.win.Hide() }) // close = hide to tray

@@ -99,5 +99,9 @@ func (c *Client) PublicURL(key string) string {
 	if c.publicBaseURL == "" {
 		return key
 	}
-	return strings.TrimRight(c.publicBaseURL, "/") + "/" + strings.TrimLeft(key, "/")
+	base := strings.TrimRight(c.publicBaseURL, "/")
+	if !strings.HasPrefix(strings.ToLower(base), "http://") && !strings.HasPrefix(strings.ToLower(base), "https://") {
+		base = "https://" + strings.TrimLeft(base, "/")
+	}
+	return base + "/" + strings.TrimLeft(key, "/")
 }

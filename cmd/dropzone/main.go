@@ -16,12 +16,19 @@ import (
 	"dropzone/internal/r2"
 	"dropzone/internal/service"
 	"dropzone/internal/ui"
+	"dropzone/internal/version"
 )
 
 func main() {
 	setup := flag.Bool("setup", false, "run interactive CLI setup and exit")
 	verify := flag.Bool("verify", false, "verify R2 credentials and exit")
+	showVersion := flag.Bool("version", false, "print the version and exit")
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Println("dropzone " + version.Current)
+		return
+	}
 
 	log.SetFlags(log.LstdFlags)
 
